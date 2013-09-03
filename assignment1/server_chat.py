@@ -13,9 +13,14 @@ def broadcast_data (sock, message):
                 # broken socket connection may be, chat client pressed ctrl+c for example
                 socket.close()
                 CONNECTION_LIST.remove(socket)
+
 def welcome (sock_new):
     welcome_message = "-------------------------------------------------------------------------\n" + "                     Welcome to FileSharer                               \n" + "-------------------------------------------------------------------------\n" + "* press 1 to Register\n" + "* press 2 to share a file list\n" + "* press 3 to search for a file\n"
+    welcome_message = "1" + welcome_message
     sock_new.send(welcome_message)
+
+def register(name):
+    print 'request accepted for user name ' + name
 
 if __name__ == "__main__":
      
@@ -42,31 +47,25 @@ if __name__ == "__main__":
         for sock in read_sockets:
             #New connection
             if sock == server_socket:
-                # Handle the case in which there is a new connection recieved through server_socket
                 sockfd, addr = server_socket.accept()
                 CONNECTION_LIST.append(sockfd)
                 print "Client (%s, %s) connected" % addr
-                # print "-------------------------------------------------------------------------"
-                # print "                     Welcome to FileSharer                               "
-                # print "-------------------------------------------------------------------------"
-                # print "* press 1 to Register\n"
-                # print "* press 2 to share a file list\n"
-                #print "* press 3 to search for a file\n"
                 welcome(sockfd)
-                broadcast_data(sockfd, "[%s:%s] entered room\n" % addr)
              
             #Some incoming message from a client
             else:
                 # Data recieved from client, process it
                 try:
-                    #In Windows, sometimes when a TCP program closes abruptly,
-                    # a "Connection reset by peer" exception will be thrown
                     data = sock.recv(RECV_BUFFER)
                     if data:
-                        broadcast_data(sock, "\r" + '<' + str(sock.getpeername()) + '> ' + data)                
-                 
+                        print " data is : " + data
+                        if data[0] == '1':
+                            register(data[1:])
+                        else if data[0] == '2':
+                            addFileList(data[1:])
+                        else if data[0] == '3':
+                            search(data[1:])             
                 except:
-                    broadcast_data(sock, "Client (%s, %s) is offline" % addr)
                     print "Client (%s, %s) is offline" % addr
                     sock.close()
                     CONNECTION_LIST.remove(sock)
