@@ -9,6 +9,15 @@ def register() :
     user_name = raw_input('enter a user name:')
     user_name = '1' + user_name
     s.send(user_name)
+def addFileList() :
+    fileName = raw_input()
+    message = ''
+    while fileName != '0':
+        message = message + fileName + '\n'
+        fileName = raw_input()
+    message = '2' + message
+    s.send(message)    
+
 
 #main function
 if __name__ == "__main__":
@@ -50,22 +59,24 @@ if __name__ == "__main__":
                     #print data
                     if data[0] == '1' :
                         print 'welcome message \n'
-                    sys.stdout.write(data)
+                        print data[1:]
+                    elif data[0] == '2' :
+                        print data[1:]
+                    #sys.stdout.append(data)
                     #prompt()
-             
             #user entered a message
             else :
                 msg_type = int(raw_input())
                 if msg_type == 1:
                     print 'msg type = 1'
                     register()
-                else if msg_type == 2:
+                elif msg_type == 2:
                     print 'msg type = 2'
                     addFileList()
-                else if msg_type == 3:
+                elif msg_type == 3:
                     search()
-                else
-                    "msg_type not valid"
+                else:
+                    print "msg_type not valid"
                 #msg = sys.stdin.readline()
                 #s.send(msg)
                 #prompt()
